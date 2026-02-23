@@ -1,15 +1,15 @@
 # =============================================================================
 # FiveM Cache Cleaner
 # -----------------------------------------------------------------------------
-# Loescht die FiveM-Cache-Ordner und startet FiveM danach automatisch neu.
+# Löscht die FiveM-Cache-Ordner und startet FiveM danach automatisch neu.
 #
-# Geloescht werden NUR:  cache | server-cache | server-cache-priv
-# Unveraendert bleibt:   game-storage  (kein erneuter Spieldaten-Download)
+# Gelöscht werden NUR:  cache | server-cache | server-cache-priv
+# Unverändert bleibt:   game-storage  (kein erneuter Spieldaten-Download)
 #
 # Pfad-Erkennung (Reihenfolge):
 #   1. Windows-Standardpfad  (%LOCALAPPDATA%\FiveM)
 #   2. Gespeicherter Pfad    (%APPDATA%\FiveMCacheCleaner\config.json)
-#   3. Vollstaendiger PC-Scan aller vorhandenen Laufwerke
+#   3. Vollständiger PC-Scan aller vorhandenen Laufwerke
 # =============================================================================
 
 import os
@@ -26,17 +26,17 @@ from pathlib import Path
 
 VERSION = "1.0.0"
 
-# Nur diese drei Ordner werden geloescht – game-storage bleibt unangetastet.
+# Nur diese drei Ordner werden gelöscht – game-storage bleibt unangetastet.
 CACHE_FOLDERS = ["cache", "server-cache", "server-cache-priv"]
 
 # Standard-Installationspfad von FiveM unter Windows.
 DEFAULT_FIVEM_PATH = Path(os.environ.get("LOCALAPPDATA", "")) / "FiveM"
 
-# Speicherort fuer die Konfigurationsdatei (gefundener FiveM-Pfad).
+# Speicherort für die Konfigurationsdatei (gefundener FiveM-Pfad).
 CONFIG_DIR  = Path(os.environ.get("APPDATA", "")) / "FiveMCacheCleaner"
 CONFIG_FILE = CONFIG_DIR / "config.json"
 
-# Systemordner, die beim PC-Scan uebersprungen werden (irrelevant + langsam).
+# Systemordner, die beim PC-Scan übersprungen werden (irrelevant + langsam).
 SKIP_DIRS = {"windows", "system32", "syswow64", "$recycle.bin", "recovery", "perflogs"}
 
 
@@ -52,7 +52,7 @@ def print_header():
 
 
 def print_status(symbol: str, message: str):
-    """Gibt eine formatierte Statuszeile aus, z. B. '  [OK] Cache geloescht'."""
+    """Gibt eine formatierte Statuszeile aus, z. B. '  [OK] Cache gelöscht'."""
     print(f"  [{symbol}] {message}")
 
 
@@ -61,8 +61,8 @@ def print_status(symbol: str, message: str):
 def save_config(fivem_path: Path):
     """
     Speichert den gefundenen FiveM-Pfad in der Konfigurationsdatei.
-    Verhindert, dass beim naechsten Programmstart ein erneuter PC-Scan
-    noetig ist.
+    Verhindert, dass beim nächsten Programmstart ein erneuter PC-Scan
+    nötig ist.
     """
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
     CONFIG_FILE.write_text(
@@ -74,7 +74,7 @@ def save_config(fivem_path: Path):
 def load_config() -> Path | None:
     """
     Liest den gespeicherten FiveM-Pfad aus der Konfigurationsdatei.
-    Gibt None zurueck, wenn die Datei fehlt, beschaedigt ist oder
+    Gibt None zurück, wenn die Datei fehlt, beschädigt ist oder
     der gespeicherte Pfad nicht mehr existiert.
     """
     if not CONFIG_FILE.exists():
@@ -82,11 +82,11 @@ def load_config() -> Path | None:
     try:
         data = json.loads(CONFIG_FILE.read_text(encoding="utf-8"))
         path = Path(data.get("fivem_path", ""))
-        # Sicherheitscheck: Pfad muss noch gueltig sein
+        # Sicherheitscheck: Pfad muss noch gültig sein
         if (path / "FiveM.exe").exists():
             return path
     except (json.JSONDecodeError, OSError):
-        # Beschaedigte oder nicht lesbare Config wird stillschweigend ignoriert
+        # Beschädigte oder nicht lesbare Config wird stillschweigend ignoriert
         pass
     return None
 
@@ -95,9 +95,9 @@ def load_config() -> Path | None:
 
 def get_all_drives() -> list[str]:
     """
-    Gibt eine Liste aller vorhandenen Laufwerksbuchstaben zurueck (A–Z).
-    Nicht vorhandene Laufwerke werden uebersprungen.
-    Beispiel-Rueckgabe: ['C:\\', 'D:\\', 'E:\\']
+    Gibt eine Liste aller vorhandenen Laufwerksbuchstaben zurück (A–Z).
+    Nicht vorhandene Laufwerke werden übersprungen.
+    Beispiel-Rückgabe: ['C:\\', 'D:\\', 'E:\\']
     """
     return [
         f"{letter}:\\"
@@ -112,15 +112,15 @@ def find_fivem_path() -> Path | None:
     """
     Sucht den FiveM-Installationspfad in drei Stufen:
 
-    1. Standardpfad  – schnellste Pruefung, trifft fuer die meisten User zu.
-    2. Config-Datei  – gespeichertes Ergebnis eines frueheren Scans.
+    1. Standardpfad  – schnellste Prüfung, trifft für die meisten User zu.
+    2. Config-Datei  – gespeichertes Ergebnis eines früheren Scans.
     3. PC-Scan       – durchsucht alle Laufwerke nach 'FiveM.exe'.
-                       Das Ergebnis wird fuer kuenftige Starts gespeichert.
+                       Das Ergebnis wird für künftige Starts gespeichert.
 
-    Gibt den Pfad zum FiveM-Verzeichnis zurueck oder None, falls nicht gefunden.
+    Gibt den Pfad zum FiveM-Verzeichnis zurück oder None, falls nicht gefunden.
     """
 
-    # Stufe 1: Standardpfad pruefen (%LOCALAPPDATA%\FiveM)
+    # Stufe 1: Standardpfad prüfen (%LOCALAPPDATA%\FiveM)
     if (DEFAULT_FIVEM_PATH / "FiveM.exe").exists():
         return DEFAULT_FIVEM_PATH
 
@@ -130,46 +130,46 @@ def find_fivem_path() -> Path | None:
         print_status("i", f"FiveM-Pfad aus Konfiguration geladen: {saved}")
         return saved
 
-    # Stufe 3: Vollstaendiger PC-Scan aller vorhandenen Laufwerke
+    # Stufe 3: Vollständiger PC-Scan aller vorhandenen Laufwerke
     print_status("!", "FiveM nicht im Standardpfad gefunden.")
     print_status("~", "Starte Suche auf allen Laufwerken...")
     print()
 
     for drive in get_all_drives():
-        # Aktuell durchsuchtes Laufwerk anzeigen (\r ueberschreibt die Zeile)
+        # Aktuell durchsuchtes Laufwerk anzeigen (\r überschreibt die Zeile)
         print(f"  Durchsuche {drive} ...", end="\r", flush=True)
         try:
             for root, dirs, files in os.walk(drive, followlinks=False):
-                # Irrelevante Systemordner aus der Suche ausschliessen.
-                # Die In-Place-Aenderung von dirs[] steuert, welche
-                # Unterordner os.walk als naechstes besucht.
+                # Irrelevante Systemordner aus der Suche ausschließen.
+                # Die In-Place-Änderung von dirs[] steuert, welche
+                # Unterordner os.walk als nächstes besucht.
                 dirs[:] = [d for d in dirs if d.lower() not in SKIP_DIRS]
 
                 if "FiveM.exe" in files:
                     found = Path(root)
-                    # Leerzeichen am Ende ueberschreiben den \r-Statustext
+                    # Leerzeichen am Ende überschreiben den \r-Statustext
                     print(f"  Durchsuche {drive} ...          ")
-                    # Pfad speichern – kein Re-Scan beim naechsten Start
+                    # Pfad speichern – kein Re-Scan beim nächsten Start
                     save_config(found)
                     return found
 
         except PermissionError:
-            # Gesperrte Systemverzeichnisse einfach ueberspringen
+            # Gesperrte Systemverzeichnisse einfach überspringen
             continue
 
     print()
     return None  # FiveM auf keinem Laufwerk gefunden
 
 
-# ── Cache loeschen ────────────────────────────────────────────────────────────
+# ── Cache löschen ─────────────────────────────────────────────────────────────
 
 def clean_cache(fivem_path: Path) -> int:
     """
-    Loescht die drei Cache-Ordner innerhalb von FiveM.app.
-    game-storage wird bewusst NICHT geloescht, damit der User
+    Löscht die drei Cache-Ordner innerhalb von FiveM.app.
+    game-storage wird bewusst NICHT gelöscht, damit der User
     die Spieldaten nicht neu herunterladen muss.
 
-    Gibt die Anzahl der erfolgreich geloeschten Ordner zurueck.
+    Gibt die Anzahl der erfolgreich gelöschten Ordner zurück.
     """
     # Alle Cache-Ordner liegen unter FiveM.app\
     app_dir = fivem_path / "FiveM.app"
@@ -183,14 +183,14 @@ def clean_cache(fivem_path: Path) -> int:
         folder = app_dir / folder_name
         if folder.exists():
             try:
-                shutil.rmtree(folder)  # Ordner inkl. aller Unterordner loeschen
-                print_status("OK", f"{folder_name} geloescht")
+                shutil.rmtree(folder)  # Ordner inkl. aller Unterordner löschen
+                print_status("OK", f"{folder_name} gelöscht")
                 deleted += 1
             except OSError as exc:
-                # z. B. wenn FiveM noch laeuft und Dateien gesperrt sind
-                print_status("ERR", f"{folder_name} konnte nicht geloescht werden: {exc}")
+                # z. B. wenn FiveM noch läuft und Dateien gesperrt sind
+                print_status("ERR", f"{folder_name} konnte nicht gelöscht werden: {exc}")
         else:
-            # Ordner existiert nicht – kein Fehler, einfach ueberspringen
+            # Ordner existiert nicht – kein Fehler, einfach überspringen
             print_status("--", f"{folder_name} nicht vorhanden (bereits leer)")
 
     return deleted
@@ -200,13 +200,13 @@ def clean_cache(fivem_path: Path) -> int:
 
 def launch_fivem(fivem_path: Path) -> bool:
     """
-    Startet FiveM.exe als eigenstaendigen Prozess (non-blocking).
+    Startet FiveM.exe als eigenständigen Prozess (non-blocking).
     Das Tool wartet NICHT darauf, dass FiveM beendet wird.
-    Gibt True bei Erfolg zurueck, False bei einem Fehler.
+    Gibt True bei Erfolg zurück, False bei einem Fehler.
     """
     exe = fivem_path / "FiveM.exe"
     try:
-        # Popen startet den Prozess und kehrt sofort zurueck
+        # Popen startet den Prozess und kehrt sofort zurück
         subprocess.Popen([str(exe)], cwd=str(fivem_path))
         return True
     except OSError as exc:
@@ -217,6 +217,10 @@ def launch_fivem(fivem_path: Path) -> bool:
 # ── Einstiegspunkt ────────────────────────────────────────────────────────────
 
 def main():
+    # Konsole auf UTF-8 umstellen, damit Umlaute korrekt angezeigt werden
+    if sys.platform == "win32":
+        os.system("chcp 65001 > nul")
+
     print_header()
 
     # ── Schritt 1: FiveM-Pfad ermitteln ───────────────────────────────────────
@@ -226,23 +230,23 @@ def main():
         print_status("ERR", "FiveM wurde auf keinem Laufwerk gefunden.")
         print()
         print("  Stelle sicher, dass FiveM installiert ist und versuche")
-        print("  es erneut. Falls das Problem weiterhin besteht, oeffne")
+        print("  es erneut. Falls das Problem weiterhin besteht, öffne")
         print("  ein Issue auf GitHub.")
         print()
-        input("  Enter druecken zum Beenden...")
+        input("  Enter drücken zum Beenden...")
         sys.exit(1)
 
     print_status("OK", f"FiveM gefunden: {fivem_path}")
     print()
 
-    # ── Schritt 2: Cache loeschen ─────────────────────────────────────────────
-    print("  Cache wird geloescht...")
+    # ── Schritt 2: Cache löschen ──────────────────────────────────────────────
+    print("  Cache wird gelöscht...")
     print()
     deleted_count = clean_cache(fivem_path)
     print()
 
     if deleted_count > 0:
-        print_status("OK", f"{deleted_count} Cache-Ordner erfolgreich geloescht.")
+        print_status("OK", f"{deleted_count} Cache-Ordner erfolgreich gelöscht.")
     else:
         print_status("--", "Kein Cache gefunden – bereits sauber.")
 
@@ -258,7 +262,7 @@ def main():
 
     # Countdown, damit der User die Ausgabe noch lesen kann
     for remaining in range(3, 0, -1):
-        print(f"  Fenster schliesst sich in {remaining} Sekunde(n)...", end="\r", flush=True)
+        print(f"  Fenster schließt sich in {remaining} Sekunde(n)...", end="\r", flush=True)
         time.sleep(1)
 
 

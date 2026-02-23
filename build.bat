@@ -1,10 +1,11 @@
 @echo off
+chcp 65001 > nul
 echo ============================================
 echo   FiveM Cache Cleaner - Lokaler Build
 echo ============================================
 echo.
 
-echo [1/3] Installiere Abhaengigkeiten...
+echo [1/3] Installiere Abhängigkeiten...
 pip install -r requirements.txt --quiet
 if %errorlevel% neq 0 (
     echo [ERR] pip install fehlgeschlagen.
@@ -28,7 +29,7 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
-echo [3/3] Bereinige temporaere Build-Dateien...
+echo [3/3] Bereinige temporäre Build-Dateien...
 rmdir /s /q build_tmp 2>nul
 
 echo.

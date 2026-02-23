@@ -1,0 +1,14 @@
+# PyInstaller Build-Ausgabe
+dist/
+build_tmp/
+*.spec
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtuelle Umgebungen
+.venv/
+venv/
+env/
