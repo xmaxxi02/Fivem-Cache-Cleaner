@@ -1,0 +1,62 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build EXE on Windows
+    runs-on: windows-latest
+
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: Python 3.11 einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Abhaengigkeiten installieren
+        run: pip install -r requirements.txt
+
+      - name: EXE bauen (PyInstaller)
+        run: |
+          pyinstaller `
+            --onefile `
+            --console `
+            --name FiveM_Cache_Cleaner `
+            --distpath dist `
+            --workpath build_tmp `
+            --specpath build_tmp `
+            src/main.py
+
+      - name: GitHub Release erstellen & EXE hochladen
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "FiveM Cache Cleaner ${{ github.ref_name }}"
+          body: |
+            ## FiveM Cache Cleaner ${{ github.ref_name }}
+
+            ### Verwendung
+            1. FiveM schliessen
+            2. `FiveM_Cache_Cleaner.exe` herunterladen und starten
+            3. Fertig – Cache wird geloescht und FiveM startet automatisch
+
+            ### Was wird geloescht?
+            - `cache`
+            - `server-cache`
+            - `server-cache-priv`
+
+            `game-storage` bleibt **untouched** – kein erneuter Download noetig.
+
+            ### Nicht-Standard-Installation?
+            Beim ersten Start wird automatisch der gesamte PC nach FiveM durchsucht.
+          files: dist/FiveM_Cache_Cleaner.exe
+          draft: false
+          prerelease: false
