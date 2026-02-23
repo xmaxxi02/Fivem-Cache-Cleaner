@@ -5,7 +5,7 @@ echo ============================================
 echo.
 
 echo [1/3] Installiere Abhaengigkeiten...
-pip install -r requirements.txt --quiet
+python -m pip install -r requirements.txt --quiet
 if %errorlevel% neq 0 (
     echo [ERR] pip install fehlgeschlagen.
     pause
@@ -13,7 +13,7 @@ if %errorlevel% neq 0 (
 )
 
 echo [2/3] Baue EXE mit PyInstaller...
-pyinstaller ^
+python -m PyInstaller ^
     --onefile ^
     --console ^
     --name FiveM_Cache_Cleaner ^
